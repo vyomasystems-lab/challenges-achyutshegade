@@ -8,8 +8,13 @@ async def test_mux(dut):
     """Test for mux2"""
     inp=[]
     for i in range(31):
-        inp[i] = i+1
+        
+        s = i
 
+        for j in range(31):
+            inp[j] = j+1
+
+        dut.sel.value = s
         dut.inp0.value = inp[0]
         dut.inp1.value = inp[1]
         dut.inp2.value = inp[2]
@@ -41,5 +46,11 @@ async def test_mux(dut):
         dut.inp28.value = inp[28]
         dut.inp29.value = inp[29]
         dut.inp30.value = inp[30]
+
+        await Timer(2, units='ns')
+
+        dut._log.info(f'sel={s:05} model={s+1:05} DUT={int(dut.out.value):05}')
+        assert dut.out.value == s+1, "Randomised test failed with: {s} = {out}".format(
+            i=dut.sel.value, out=dut.out.value)
 
     cocotb.log.info('##### CTB: Develop your test here ########')
